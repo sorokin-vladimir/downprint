@@ -9,8 +9,8 @@ Pure Go, no cgo. At runtime it needs a Chromium-based browser (Chrome, Chromium,
 Homebrew (macOS, Linux). Homebrew only loads formulae from third-party taps you have trusted, so trust the tap first:
 
 ```sh
-brew tap sorokin-vladimir/tap
 brew trust --tap sorokin-vladimir/tap
+brew tap sorokin-vladimir/tap
 brew install sorokin-vladimir/tap/downprint
 ```
 
@@ -32,15 +32,15 @@ downprint [flags] input.md
 
 Without `-o`, the PDF is written next to the input with the same name (`notes.md` -> `notes.pdf`).
 
-| Flag | Description |
-|------|-------------|
-| `-o path` | Output PDF path |
-| `-paper size` | `a3`, `a4`, `a5`, `b4`, `b5`, `letter`, `legal`, `ledger`, `tabloid`, or `WIDTHxHEIGHT` such as `210mmx297mm` (units: `mm`, `cm`, `in`, `pt`, `px`). Default: A4 |
-| `-landscape` | Landscape orientation |
-| `-css path` | Extra stylesheet applied on top of the built-in one |
-| `-chrome path` | Chrome/Chromium binary. Also read from `DOWNPRINT_CHROME`. Default: autodetect |
-| `-timeout d` | Conversion timeout. Default: `1m` |
-| `-version` | Print version and exit |
+| Flag           | Description                                                                                                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-o path`      | Output PDF path                                                                                                                                                  |
+| `-paper size`  | `a3`, `a4`, `a5`, `b4`, `b5`, `letter`, `legal`, `ledger`, `tabloid`, or `WIDTHxHEIGHT` such as `210mmx297mm` (units: `mm`, `cm`, `in`, `pt`, `px`). Default: A4 |
+| `-landscape`   | Landscape orientation                                                                                                                                            |
+| `-css path`    | Extra stylesheet applied on top of the built-in one                                                                                                              |
+| `-chrome path` | Chrome/Chromium binary. Also read from `DOWNPRINT_CHROME`. Default: autodetect                                                                                   |
+| `-timeout d`   | Conversion timeout. Default: `1m`                                                                                                                                |
+| `-version`     | Print version and exit                                                                                                                                           |
 
 Examples:
 
