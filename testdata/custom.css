@@ -1,0 +1,22 @@
+/* Example user stylesheet: serif body, colored headings, wider margins. */
+
+@page {
+  margin: 25mm 20mm;
+}
+
+body {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 12pt;
+}
+
+h1, h2, h3 {
+  color: #8250df;
+}
+
+h1, h2 {
+  border-bottom-color: #8250df;
+}
+
+blockquote {
+  border-left-color: #8250df;
+}
