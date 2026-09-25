@@ -1,0 +1,86 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - binary: downprint
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{ .Version }}
+
+archives:
+  - id: tarballs
+    formats: [tar.gz]
+    # Windows users get a .zip (with downprint.exe) instead of a tarball.
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    name_template: "downprint_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+  - id: binaries
+    # Raw downloadable binary per OS/arch; Windows gets downprint-windows-amd64.exe.
+    formats: [binary]
+    name_template: "downprint-{{ .Os }}-{{ .Arch }}"
+
+nfpms:
+  - id: packages
+    package_name: downprint
+    vendor: sorokin-vladimir
+    homepage: https://github.com/sorokin-vladimir/downprint
+    maintainer: "Vladimir Sorokin <v.sorokin@hey.com>"
+    description: Convert Markdown to PDF with GitHub-like styling via headless Chrome.
+    license: MIT
+    formats: [deb, rpm, apk]
+    file_name_template: "{{ .ConventionalFileName }}"
+    # Chrome is required at runtime, but package names differ across distros
+    # (and Ubuntu ships chromium as a snap), so it is suggested, not required.
+    suggests:
+      - chromium
+    contents:
+      - src: ./README.md
+        dst: /usr/share/doc/downprint/README.md
+      - src: ./LICENSE
+        dst: /usr/share/licenses/downprint/LICENSE
+
+checksum:
+  name_template: "checksums.txt"
+
+# Homebrew formula is published by scripts/update-formula.sh in the release
+# workflow (the `brews` publisher is deprecated and Casks would drop Linux).
+
+changelog:
+  use: github
+  sort: asc
+  groups:
+    - title: Features
+      regexp: '^feat'
+      order: 0
+    - title: Bug fixes
+      regexp: '^fix'
+      order: 1
+    - title: Other
+      order: 999
+  filters:
+    exclude:
+      - '^chore'
+      - '^docs'
+      - '^test'
+      - '^Merge '
+
+release:
+  name_template: "{{ .Env.RELEASE_NAME }}"
+  header: |
+    {{ .Env.RELEASE_HEADER }}

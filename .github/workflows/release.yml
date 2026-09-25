@@ -1,0 +1,110 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  # Full checks gate the release: a broken tag is never shipped.
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: vet
+        run: go vet ./...
+
+      - name: test
+        run: go test -race -timeout 5m ./...
+
+      - name: lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: latest
+
+      - name: script tests
+        run: for t in scripts/test/*_test.sh; do bash "$t" || exit 1; done
+
+  # Verify the cgo-free build and tests on the other target OSes.
+  cross-build:
+    name: build & test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    env:
+      CGO_ENABLED: 0
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: build
+        run: go build ./...
+
+      - name: test
+        run: go test -timeout 5m ./...
+
+      # End-to-end run against the Chrome preinstalled on the runners. On
+      # Windows this also covers drive-letter paths in file:// URLs.
+      - name: smoke test
+        shell: bash
+        run: |
+          go run . -o "$RUNNER_TEMP/all-blocks.pdf" testdata/all-blocks.md
+          head -c 5 "$RUNNER_TEMP/all-blocks.pdf" | grep -q '%PDF-'
+
+  release:
+    needs: [checks, cross-build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Prepare release notes
+        run: bash scripts/changelog-notes.sh "${GITHUB_REF_NAME}"
+
+      - name: Run goreleaser
+        id: goreleaser
+        uses: goreleaser/goreleaser-action@v7
+        with:
+          version: "~> v2"
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Publish the Homebrew formula to the tap from dist/checksums.txt.
+      - name: Update Homebrew formula
+        id: homebrew
+        run: bash scripts/update-formula.sh "${GITHUB_REF_NAME}"
+        env:
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+
+      # Release notes + per-target publish status in the job summary.
+      - name: Release summary
+        if: ${{ !cancelled() }}
+        run: bash scripts/release-summary.sh
+        env:
+          GORELEASER_OUTCOME: ${{ steps.goreleaser.outcome }}
+          HOMEBREW_OUTCOME: ${{ steps.homebrew.outcome }}

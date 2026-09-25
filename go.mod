@@ -1,4 +1,4 @@
-module md2pdf
+module github.com/sorokin-vladimir/downprint
 
 go 1.26
 

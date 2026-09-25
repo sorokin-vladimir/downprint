@@ -10,6 +10,9 @@ import (
 	"time"
 )
 
+// version is injected at release time via -ldflags "-X main.version=1.2.3".
+var version = "dev"
+
 type config struct {
 	input     string
 	output    string
@@ -26,13 +29,19 @@ func main() {
 	flag.StringVar(&cfg.css, "css", "", "extra stylesheet applied on top of the built-in one")
 	flag.StringVar(&cfg.paper, "paper", "", "paper size: "+paperNames()+" or WIDTHxHEIGHT, e.g. 210mmx297mm (default: a4)")
 	flag.BoolVar(&cfg.landscape, "landscape", false, "landscape orientation")
-	flag.StringVar(&cfg.chrome, "chrome", os.Getenv("MD2PDF_CHROME"), "path to Chrome/Chromium binary (default: autodetect)")
+	flag.StringVar(&cfg.chrome, "chrome", os.Getenv("DOWNPRINT_CHROME"), "path to Chrome/Chromium binary (default: autodetect)")
 	flag.DurationVar(&cfg.timeout, "timeout", 60*time.Second, "conversion timeout")
+	showVersion := flag.Bool("version", false, "print version and exit")
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "usage: md2pdf [flags] input.md\n\n")
+		fmt.Fprintf(os.Stderr, "usage: downprint [flags] input.md\n\n")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println(version)
+		return
+	}
 
 	if flag.NArg() != 1 {
 		flag.Usage()
@@ -41,7 +50,7 @@ func main() {
 	cfg.input = flag.Arg(0)
 
 	if err := run(cfg); err != nil {
-		fmt.Fprintln(os.Stderr, "md2pdf:", err)
+		fmt.Fprintln(os.Stderr, "downprint:", err)
 		os.Exit(1)
 	}
 }

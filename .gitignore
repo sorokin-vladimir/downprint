@@ -1,1 +1,18 @@
+# AI tools
+.claude/
+.code-review-graph/
+.mcp.json
+AGENTS.md
+CLAUDE.md
+
 .DS_Store
+
+# Dev build
+/downprint
+/bin/
+
+# GoReleaser output
+/dist/
+
+# Rendered samples
+testdata/*.pdf

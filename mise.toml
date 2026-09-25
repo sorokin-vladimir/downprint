@@ -1,0 +1,46 @@
+[tools]
+go = "1.26.0"
+
+[tasks.build]
+description = "Build binary"
+run = "CGO_ENABLED=0 go build -o ./bin/downprint ."
+
+[tasks.sample]
+description = "Render testdata/all-blocks.md to bin/all-blocks.pdf"
+run = "go run . -o bin/all-blocks.pdf testdata/all-blocks.md"
+
+[tasks.test]
+description = "Run all tests"
+run = "go test ./..."
+
+[tasks.test-v]
+description = "Run all tests verbose"
+run = "go test -v ./..."
+
+[tasks.test-scripts]
+description = "Run release script tests"
+run = "for t in scripts/test/*_test.sh; do bash \"$t\" || exit 1; done"
+
+[tasks.lint]
+description = "Run golangci-lint"
+run = "golangci-lint run ./..."
+
+[tasks.vet]
+description = "Run go vet"
+run = "go vet ./..."
+
+[tasks.check]
+description = "Full check: vet + lint + test"
+run = ["go vet ./...", "golangci-lint run ./...", "go test ./..."]
+
+[tasks.tidy]
+description = "Tidy go modules"
+run = "go mod tidy"
+
+[tasks.hooks]
+description = "Install git hooks via lefthook"
+run = "lefthook install"
+
+[tasks.release]
+description = "Cut a release: promote CHANGELOG, commit, tag (no push). Usage: mise run release <version|patch|minor|major>"
+run = "bash scripts/release.sh"

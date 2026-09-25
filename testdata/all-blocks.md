@@ -86,7 +86,7 @@
 2. Пункт с блоком кода:
 
    ```bash
-   go build -o md2pdf .
+   go build -o downprint .
    ```
 
 3. Пункт с цитатой:
@@ -151,7 +151,7 @@ Bash:
 set -euo pipefail
 
 for f in *.md; do
-  md2pdf "$f" && echo "ok: $f"
+  downprint "$f" && echo "ok: $f"
 done
 ```
 

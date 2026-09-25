@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/url"
 	"path/filepath"
+	"strings"
 
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting/v2"
@@ -98,6 +99,11 @@ func renderHTML(src []byte, opts pageOptions) ([]byte, error) {
 // fileURL builds a file:// URL for a local path. html/template rejects
 // file:// URLs unless they are marked as trusted.
 func fileURL(path string) template.URL {
-	u := url.URL{Scheme: "file", Path: filepath.ToSlash(path)}
+	p := filepath.ToSlash(path)
+	// Windows paths (C:/...) need a leading slash, or "C:" becomes the host.
+	if !strings.HasPrefix(p, "/") {
+		p = "/" + p
+	}
+	u := url.URL{Scheme: "file", Path: p}
 	return template.URL(u.String())
 }

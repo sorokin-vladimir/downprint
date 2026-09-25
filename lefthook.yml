@@ -1,0 +1,18 @@
+pre-push:
+  parallel: true
+  commands:
+    vet:
+      run: go vet ./...
+    lint:
+      run: golangci-lint run ./...
+    test:
+      run: go test -race ./...
+    changelog-reminder:
+      run: bash scripts/changelog-reminder.sh
+
+pre-commit:
+  commands:
+    lint-fmt:
+      run: golangci-lint fmt ./...
+    lint-run:
+      run: golangci-lint run ./...
