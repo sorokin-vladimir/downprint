@@ -1,5 +1,14 @@
 # downprint
 
+[![Go](https://img.shields.io/badge/go-1.26+-blue)](https://go.dev)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/sorokin-vladimir/downprint)](https://github.com/sorokin-vladimir/downprint/releases)
+[![Downloads](https://img.shields.io/github/downloads/sorokin-vladimir/downprint/total?color=blue)](https://github.com/sorokin-vladimir/downprint/releases)
+[![Last commit](https://img.shields.io/github/last-commit/sorokin-vladimir/downprint)](https://github.com/sorokin-vladimir/downprint/commits/main)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%C2%B7%20Linux%20%C2%B7%20Windows-lightgrey)](#install)
+
+![downprint turns a Markdown file into a styled PDF page](assets/social-preview.png)
+
 Converts Markdown to PDF with GitHub-like styling. Markdown is rendered to HTML with [goldmark](https://github.com/yuin/goldmark) (GFM, syntax highlighting via chroma), then printed to PDF by headless Chrome through [chromedp](https://github.com/chromedp/chromedp).
 
 Pure Go, no cgo. At runtime it needs a Chromium-based browser (Chrome, Chromium, or Edge).
