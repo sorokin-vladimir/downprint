@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 A human title for a release is written as an em-dash suffix on its heading,
 e.g. `## [1.2.0] - 2026-06-11 — Custom fonts`.
 
-## [Unreleased] — First release
+## [Unreleased]
+
+## [1.0.0] - 2026-09-25 — First release
 
 ### Added
 
